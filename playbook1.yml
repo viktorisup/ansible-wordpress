@@ -1,0 +1,11 @@
+- name: Install web server
+  hosts: web
+  become: yes
+  roles:
+    - nginx
+
+- name: Install Mariadb
+  hosts: db
+  become: yes
+  roles: 
+    - db
