@@ -1,0 +1,39 @@
+server {
+        # Слушаем 80й порт
+        listen 80;
+        root /var/www/wp-site/html;
+        index index.php index.html index.htm;
+        location / {
+                try_files $uri $uri/ /index.php?$args;
+        }
+        # Обрабатываем PHP
+        location ~ \.php$ {
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                # NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+                fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+        }
+        # Все остальное
+        # Запрещаем доступ к .htaccess
+        location ~ /\.ht {
+                deny all;
+        }
+        # Просим кешировать статику на Х дней, не писать в логи
+        location ~*
+        ^.+\.(js|css|swf|xml|txt|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|rss|atom|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ {
+                access_log off;
+                log_not_found off;
+                expires 30d;
+        }
+}
+# Отдельно слушаем домен с www и редиректим на основной
+server {
+        # Слушаем 80й порт
+        listen 80;
+        # Обслуживаем доменное имя c www
+        server_name www.example.com;
+        # Отправляем запрос на основной домен
+        return 301 $scheme://example.com$request_uri;
+}

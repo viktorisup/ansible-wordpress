@@ -4,8 +4,20 @@
   roles:
     - nginx
 
+- name: Install php-fpm
+  hosts: web
+  become: yes
+  roles: 
+    - php-fpm
+
 - name: Install Mariadb
   hosts: db
   become: yes
   roles: 
     - db
+
+- name: Install wp
+  hosts: web
+  become: yes
+  roles: 
+    - wp

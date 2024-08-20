@@ -1,2 +1,81 @@
 ---
 # tasks file for wp
+- name: download wp
+  ansible.builtin.get_url:
+    url: https://ru.wordpress.org/latest-ru_RU.tar.gz
+    dest: /tmp/wp.tar.gz
+
+- name: Extract the archive
+  ansible.builtin.unarchive:
+    src: /tmp/wp.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: create directory from wp
+  ansible.builtin.file:
+    path: /var/www/wp-site/html/
+    state: directory
+
+- name: copy wp file in wp-site
+  ansible.builtin.copy:
+    src: /tmp/wordpress/
+    dest: /var/www/wp-site/html/
+    remote_src: yes
+
+- name: change owner wp-site
+  ansible.builtin.file:
+    path: /var/www/wp-site/html/
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: copy config wp
+  ansible.builtin.copy:
+    src: /var/www/wp-site/html/wp-config-sample.php
+    dest: /var/www/wp-site/html/wp-config.php
+    owner: www-data
+    group: www-data
+    mode: '0644'
+    force: yes
+    remote_src: yes
+
+- name: Edit config wp db
+  ansible.builtin.replace:
+        path: /var/www/wp-site/html/wp-config.php 
+        regexp: 'database_name_here'             
+        replace: 'wp-db'
+
+- name: Edit config wp user
+  ansible.builtin.replace:
+        path: /var/www/wp-site/html/wp-config.php 
+        regexp: 'username_here'             
+        replace: 'wp-user'
+
+- name: Edit config wp pass
+  ansible.builtin.replace:
+        path: /var/www/wp-site/html/wp-config.php 
+        regexp: 'password_here'             
+        replace: 'qwertyWP'
+
+- name: Edit config wp db host
+  ansible.builtin.replace:
+        path: /var/www/wp-site/html/wp-config.php 
+        regexp: 'localhost'             
+        replace: '192.168.192.112'
+
+- name: create config web-server nginx
+  ansible.builtin.template:
+    src: wp-site.j2
+    dest: /etc/nginx/sites-available/wp-site.conf
+
+- name: remove default sim link
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  
+- name: create sim link wp-site to site-enabled
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/wp-site.conf
+    dest: /etc/nginx/sites-enabled/wp-site
+    state: link
