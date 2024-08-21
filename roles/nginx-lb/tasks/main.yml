@@ -1,14 +1,20 @@
 ---
-# tasks file for nginx
+# tasks file for nginx-lb
 - name: install nginx
   ansible.builtin.apt:
     name: nginx
     state: latest
     update_cache: yes
 
+- name: create congig nginx-lb
+  ansible.builtin.template:
+    src: config.j2
+    dest: /etc/nginx/sites-available/default
+  notify:
+    - restart nginx
+
 - name: start and autorun nginx
   ansible.builtin.service:
     name: nginx
     state: started
     enabled: yes
-

@@ -1,0 +1,6 @@
+---
+# defaults file for nginx-lb
+listen_port: 80
+listen_server_name: example.com
+backend_server1: 192.168.192.115
+backend_server2: 192.168.192.116
