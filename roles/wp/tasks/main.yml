@@ -35,6 +35,8 @@
   ansible.builtin.template:
     src: wp-config.j2
     dest: /var/www/wp-site/html/wp-config.php
+  tags:
+    - wpconf
 
 - name: create config web-server nginx
   ansible.builtin.template:

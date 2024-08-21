@@ -1,7 +1,2 @@
 ---
 # defaults file for wp
-wp_db_name: wp-db
-wp_db_user: wp-user
-wp_db_pass: qwertyWP
-wp_db_host: 192.168.168.112
-prefix_db: 'wp6_'

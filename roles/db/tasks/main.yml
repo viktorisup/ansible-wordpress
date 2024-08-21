@@ -64,7 +64,7 @@
   community.mysql.mysql_user:
     name: '{{db_user}}'
     password: '{{db_pass}}'
-    priv: 'wpdb5.*:ALL'
+    priv: '{{db_name}}.*:ALL'
     host: '%'
     state: present
     column_case_sensitive: false
